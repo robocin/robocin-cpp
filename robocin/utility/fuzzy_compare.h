@@ -136,13 +136,13 @@ class FuzzyIsZero {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyIsZero() noexcept
+  constexpr FuzzyIsZero()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyIsZero(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyIsZero(floating_point_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type value) const noexcept {
+  constexpr bool operator()(floating_point_type value) const {
     return fuzzyIsZero(value, epsilon_);
   }
 
@@ -155,13 +155,13 @@ class FuzzyEqualTo {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyEqualTo() noexcept
+  constexpr FuzzyEqualTo()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyEqualTo(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyEqualTo(floating_point_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const noexcept {
+  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
     return fuzzyCmpEqual(lhs, rhs, epsilon_);
   }
 
@@ -174,13 +174,13 @@ class FuzzyNotEqualTo {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyNotEqualTo() noexcept
+  constexpr FuzzyNotEqualTo()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyNotEqualTo(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyNotEqualTo(floating_point_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const noexcept {
+  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
     return fuzzyCmpNotEqual(lhs, rhs, epsilon_);
   }
 
@@ -193,14 +193,14 @@ class FuzzyThreeWay {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyThreeWay() noexcept
+  constexpr FuzzyThreeWay()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyThreeWay(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyThreeWay(floating_point_type epsilon) : epsilon_{epsilon} {}
 
   constexpr std::strong_ordering operator()(floating_point_type lhs,
-                                            floating_point_type rhs) const noexcept {
+                                            floating_point_type rhs) const {
     return fuzzyCmpThreeWay(lhs, rhs, epsilon_);
   }
 
@@ -213,13 +213,13 @@ class FuzzyLess {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyLess() noexcept
+  constexpr FuzzyLess()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyLess(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyLess(floating_point_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const noexcept {
+  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
     return fuzzyCmpLess(lhs, rhs, epsilon_);
   }
 
@@ -232,13 +232,13 @@ class FuzzyLessEqual {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyLessEqual() noexcept
+  constexpr FuzzyLessEqual()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyLessEqual(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyLessEqual(floating_point_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const noexcept {
+  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
     return fuzzyCmpLessEqual(lhs, rhs, epsilon_);
   }
 
@@ -251,13 +251,13 @@ class FuzzyGreater {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyGreater() noexcept
+  constexpr FuzzyGreater()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyGreater(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyGreater(floating_point_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const noexcept {
+  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
     return fuzzyCmpGreater(lhs, rhs, epsilon_);
   }
 
@@ -270,13 +270,13 @@ class FuzzyGreaterEqual {
  public:
   using floating_point_type = F;
 
-  constexpr FuzzyGreaterEqual() noexcept
+  constexpr FuzzyGreaterEqual()
     requires(has_epsilon_v<floating_point_type>)
       : epsilon_{epsilon_v<floating_point_type>} {}
 
-  constexpr explicit FuzzyGreaterEqual(floating_point_type epsilon) noexcept : epsilon_{epsilon} {}
+  constexpr explicit FuzzyGreaterEqual(floating_point_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const noexcept {
+  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
     return fuzzyCmpGreaterEqual(lhs, rhs, epsilon_);
   }
 
