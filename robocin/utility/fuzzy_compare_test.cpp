@@ -1,0 +1,736 @@
+//
+// Created by José Cruz <joseviccruz> on 08/04/23.
+// Copyright (c) 2023 RobôCIn.
+//
+
+#include "robocin/utility/fuzzy_compare.h"
+
+#include <gtest/gtest.h>
+
+#include "robocin/utility/internal/test/epsilon_injector.h"
+
+namespace robocin {
+namespace {
+
+using ::testing::Test;
+using ::testing::Types;
+
+using FloatingPointTestTypes = Types<float, double, long double>;
+
+template <class>
+class FloatingPointTest : public Test {};
+TYPED_TEST_SUITE(FloatingPointTest, FloatingPointTestTypes);
+
+// fuzzyIsZero -------------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyIsZeroGivenZeroValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  EXPECT_TRUE(fuzzyIsZero<T>(0, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(0));
+
+  EXPECT_TRUE(fuzzyIsZero<T>(-0, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(-0));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyIsZeroGivenLessThanEpsilonValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kQuarterEpsilon = epsilon_v<T> / 4;
+  static constexpr T kHalfEpsilon = epsilon_v<T> / 2;
+  static constexpr T kTwoThirdsEpsilon = 2 * epsilon_v<T> / 3;
+
+  EXPECT_TRUE(fuzzyIsZero<T>(kQuarterEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(kQuarterEpsilon));
+
+  EXPECT_TRUE(fuzzyIsZero<T>(-kQuarterEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(-kQuarterEpsilon));
+
+  EXPECT_TRUE(fuzzyIsZero<T>(kHalfEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(kHalfEpsilon));
+
+  EXPECT_TRUE(fuzzyIsZero<T>(-kHalfEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(-kHalfEpsilon));
+
+  EXPECT_TRUE(fuzzyIsZero<T>(kTwoThirdsEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(kTwoThirdsEpsilon));
+
+  EXPECT_TRUE(fuzzyIsZero<T>(-kTwoThirdsEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyIsZero<T>(-kTwoThirdsEpsilon));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyIsZeroGivenGreaterThanEpsilonValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kTwoEpsilon = 2 * epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = static_cast<T>(std::numeric_limits<int>::max()) / 2;
+
+  EXPECT_FALSE(fuzzyIsZero<T>(kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyIsZero<T>(kTwoEpsilon));
+
+  EXPECT_FALSE(fuzzyIsZero<T>(-kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyIsZero<T>(-kTwoEpsilon));
+
+  EXPECT_FALSE(fuzzyIsZero<T>(kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyIsZero<T>(kFortyTwo));
+
+  EXPECT_FALSE(fuzzyIsZero<T>(-kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyIsZero<T>(-kFortyTwo));
+
+  EXPECT_FALSE(fuzzyIsZero<T>(kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyIsZero<T>(kLargeNumber));
+
+  EXPECT_FALSE(fuzzyIsZero<T>(-kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyIsZero<T>(-kLargeNumber));
+}
+
+// fuzzyCmpEqual -----------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyCmpEqualGivenExactlyEqualValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(0, 0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(0, 0));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(-0, -0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(-0, -0));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kFortyTwo, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kFortyTwo, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(-kFortyTwo, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(-kFortyTwo, -kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kLargeNumber, kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kLargeNumber, kLargeNumber));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(-kLargeNumber, -kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(-kLargeNumber, -kLargeNumber));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpEqualGivenWithinEpsilonValues) {
+  using T = TypeParam;
+
+  static constexpr T kPi = std::numbers::pi_v<T>;
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kHalfEpsilon = epsilon_v<T> / 2;
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(0, kHalfEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(0, kHalfEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(0, -kHalfEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(0, -kHalfEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kPi, kPi + kHalfEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kPi, kPi + kHalfEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kPi, kPi - kHalfEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpEqual<T>(kPi, kPi - kHalfEpsilon));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpEqualGivenAlmostEqualButDifferentValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kTwoEpsilon = 2 * epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, kTwoEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, -kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, -kTwoEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kFortyTwo, kFortyTwo + kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kFortyTwo, kFortyTwo + kTwoEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kFortyTwo, kFortyTwo - kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kFortyTwo, kFortyTwo - kTwoEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kLargeNumber, kLargeNumber + kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kLargeNumber, kLargeNumber + kTwoEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kLargeNumber, kLargeNumber - kTwoEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kLargeNumber, kLargeNumber - kTwoEpsilon));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpEqualGivenDifferentValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kSeven = 7;
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(0, -kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kSeven, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kSeven, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kSeven, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpEqual<T>(kSeven, -kFortyTwo));
+}
+
+// fuzzyCmpNotEqual --------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyCmpNotEqualGivenExactlyEqualValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(0, 0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(0, 0));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(-0, -0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(-0, -0));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kFortyTwo, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kFortyTwo, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(-kFortyTwo, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(-kFortyTwo, -kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kLargeNumber, kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kLargeNumber, kLargeNumber));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(-kLargeNumber, -kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(-kLargeNumber, -kLargeNumber));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpNotEqualGivenWithinEpsilonValues) {
+  using T = TypeParam;
+
+  static constexpr T kPi = std::numbers::pi_v<T>;
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kHalfEpsilon = epsilon_v<T> / 2;
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(0, kHalfEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(0, kHalfEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(0, -kHalfEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(0, -kHalfEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kPi, kPi + kHalfEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kPi, kPi + kHalfEpsilon));
+
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kPi, kPi - kHalfEpsilon, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpNotEqual<T>(kPi, kPi - kHalfEpsilon));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpNotEqualGivenAlmostEqualButDifferentValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kTwoEpsilon = 2 * epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, kTwoEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, kTwoEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, -kTwoEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, -kTwoEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kFortyTwo, kFortyTwo + kTwoEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kFortyTwo, kFortyTwo + kTwoEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kFortyTwo, kFortyTwo - kTwoEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kFortyTwo, kFortyTwo - kTwoEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kLargeNumber, kLargeNumber + kTwoEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kLargeNumber, kLargeNumber + kTwoEpsilon));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kLargeNumber, kLargeNumber - kTwoEpsilon, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kLargeNumber, kLargeNumber - kTwoEpsilon));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpNotEqualGivenDifferentValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kSeven = 7;
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(0, -kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kSeven, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kSeven, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kSeven, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpNotEqual<T>(kSeven, -kFortyTwo));
+}
+
+// fuzzyCmpThreeWay --------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyCmpThreeWayGivenEqualValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(0, 0, kEpsilon)));
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(0, 0)));
+
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(-0, -0, kEpsilon)));
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(-0, -0)));
+
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(kFortyTwo, kFortyTwo, kEpsilon)));
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(kFortyTwo, kFortyTwo)));
+
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(-kFortyTwo, -kFortyTwo, kEpsilon)));
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(-kFortyTwo, -kFortyTwo)));
+
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(kLargeNumber, kLargeNumber, kEpsilon)));
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(kLargeNumber, kLargeNumber)));
+
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(-kLargeNumber, -kLargeNumber, kEpsilon)));
+  EXPECT_TRUE(std::is_eq(fuzzyCmpThreeWay<T>(-kLargeNumber, -kLargeNumber)));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpThreeWayGivenTheFirstValueLessThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(0, kFortyTwo, kEpsilon)));
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(0, kFortyTwo)));
+
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(-kFortyTwo, 0, kEpsilon)));
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(-kFortyTwo, 0)));
+
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(kFortyTwo, kLargeNumber, kEpsilon)));
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(kFortyTwo, kLargeNumber)));
+
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(-kLargeNumber, -kFortyTwo, kEpsilon)));
+  EXPECT_TRUE(std::is_lt(fuzzyCmpThreeWay<T>(-kLargeNumber, -kFortyTwo)));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpThreeWayGivenTheFirstValueGreaterThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(kFortyTwo, 0, kEpsilon)));
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(kFortyTwo, 0)));
+
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(0, -kFortyTwo, kEpsilon)));
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(0, -kFortyTwo)));
+
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(kLargeNumber, kFortyTwo, kEpsilon)));
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(kLargeNumber, kFortyTwo)));
+
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(-kFortyTwo, -kLargeNumber, kEpsilon)));
+  EXPECT_TRUE(std::is_gt(fuzzyCmpThreeWay<T>(-kFortyTwo, -kLargeNumber)));
+}
+
+// fuzzyCmpLess ------------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyCmpLessGivenEqualValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(0, 0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(0, 0));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(-0, -0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(-0, -0));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(kFortyTwo, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(kFortyTwo, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(-kFortyTwo, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(-kFortyTwo, -kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(kLargeNumber, kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(kLargeNumber, kLargeNumber));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(-kLargeNumber, -kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(-kLargeNumber, -kLargeNumber));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpLessGivenTheFirstValueLessThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpLess<T>(0, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLess<T>(0, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpLess<T>(-kFortyTwo, 0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLess<T>(-kFortyTwo, 0));
+
+  EXPECT_TRUE(fuzzyCmpLess<T>(kFortyTwo, kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLess<T>(kFortyTwo, kLargeNumber));
+
+  EXPECT_TRUE(fuzzyCmpLess<T>(-kLargeNumber, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLess<T>(-kLargeNumber, -kFortyTwo));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpLessGivenTheFirstValueGreaterThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(kFortyTwo, 0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(kFortyTwo, 0));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(0, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(0, -kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(kLargeNumber, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(kLargeNumber, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpLess<T>(-kFortyTwo, -kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLess<T>(-kFortyTwo, -kLargeNumber));
+}
+
+// fuzzyCmpLessEqual -------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyCmpLessEqualGivenEqualValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(0, 0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(0, 0));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-0, -0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-0, -0));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(kFortyTwo, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(kFortyTwo, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kFortyTwo, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kFortyTwo, -kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(kLargeNumber, kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(kLargeNumber, kLargeNumber));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kLargeNumber, -kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kLargeNumber, -kLargeNumber));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpLessEqualGivenTheFirstValueLessThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(0, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(0, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kFortyTwo, 0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kFortyTwo, 0));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(kFortyTwo, kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(kFortyTwo, kLargeNumber));
+
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kLargeNumber, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpLessEqual<T>(-kLargeNumber, -kFortyTwo));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpLessEqualGivenTheFirstValueGreaterThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(kFortyTwo, 0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(kFortyTwo, 0));
+
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(0, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(0, -kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(kLargeNumber, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(kLargeNumber, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(-kFortyTwo, -kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpLessEqual<T>(-kFortyTwo, -kLargeNumber));
+}
+
+// fuzzyCmpGreater ---------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyCmpGreaterGivenEqualValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(0, 0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(0, 0));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-0, -0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-0, -0));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(kFortyTwo, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(kFortyTwo, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kFortyTwo, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kFortyTwo, -kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(kLargeNumber, kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(kLargeNumber, kLargeNumber));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kLargeNumber, -kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kLargeNumber, -kLargeNumber));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpGreaterGivenTheFirstValueLessThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(0, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(0, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kFortyTwo, 0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kFortyTwo, 0));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(kFortyTwo, kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(kFortyTwo, kLargeNumber));
+
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kLargeNumber, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreater<T>(-kLargeNumber, -kFortyTwo));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpGreaterGivenTheFirstValueGreaterThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpGreater<T>(kFortyTwo, 0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreater<T>(kFortyTwo, 0));
+
+  EXPECT_TRUE(fuzzyCmpGreater<T>(0, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreater<T>(0, -kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpGreater<T>(kLargeNumber, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreater<T>(kLargeNumber, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpGreater<T>(-kFortyTwo, -kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreater<T>(-kFortyTwo, -kLargeNumber));
+}
+
+// fuzzyCmpGreaterEqual ----------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyCmpGreaterEqualGivenEqualValues) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(0, 0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(0, 0));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-0, -0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-0, -0));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kFortyTwo, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kFortyTwo, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-kFortyTwo, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-kFortyTwo, -kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kLargeNumber, kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kLargeNumber, kLargeNumber));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-kLargeNumber, -kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-kLargeNumber, -kLargeNumber));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpGreaterEqualGivenTheFirstValueLessThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(0, kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(0, kFortyTwo));
+
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(-kFortyTwo, 0, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(-kFortyTwo, 0));
+
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(kFortyTwo, kLargeNumber, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(kFortyTwo, kLargeNumber));
+
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(-kLargeNumber, -kFortyTwo, kEpsilon));
+  EXPECT_FALSE(fuzzyCmpGreaterEqual<T>(-kLargeNumber, -kFortyTwo));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyCmpGreaterEqualGivenTheFirstValueGreaterThanTheSecond) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+  static constexpr T kFortyTwo = 42;
+  static constexpr T kLargeNumber = 99'999;
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kFortyTwo, 0, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kFortyTwo, 0));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(0, -kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(0, -kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kLargeNumber, kFortyTwo, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(kLargeNumber, kFortyTwo));
+
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-kFortyTwo, -kLargeNumber, kEpsilon));
+  EXPECT_TRUE(fuzzyCmpGreaterEqual<T>(-kFortyTwo, -kLargeNumber));
+}
+
+// Functors ----------------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, FuzzyIsZeroFunctorGivenZeros) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyIsZero<T> kIsZero(kEpsilon);
+  const FuzzyIsZero<T> kDefaultIsZero;
+
+  EXPECT_TRUE(kIsZero(0));
+  EXPECT_TRUE(kIsZero(-0));
+
+  EXPECT_TRUE(kDefaultIsZero(0));
+  EXPECT_TRUE(kDefaultIsZero(-0));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyEqualToFunctorGivenZeros) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyEqualTo<T> kEqualTo(kEpsilon);
+  const FuzzyEqualTo<T> kDefaultEqualTo;
+
+  EXPECT_TRUE(kEqualTo(0, 0));
+  EXPECT_TRUE(kEqualTo(-0, -0));
+
+  EXPECT_TRUE(kDefaultEqualTo(0, 0));
+  EXPECT_TRUE(kDefaultEqualTo(-0, -0));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyNotEqualToFunctorGivenZeros) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyNotEqualTo<T> kNotEqualTo(kEpsilon);
+  const FuzzyNotEqualTo<T> kDefaultNotEqualTo;
+
+  EXPECT_FALSE(kNotEqualTo(0, 0));
+  EXPECT_FALSE(kNotEqualTo(-0, -0));
+
+  EXPECT_FALSE(kDefaultNotEqualTo(0, 0));
+  EXPECT_FALSE(kDefaultNotEqualTo(-0, -0));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyThreeWayFunctorGivenZeros) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyThreeWay<T> kThreeWay(kEpsilon);
+  const FuzzyThreeWay<T> kDefaultThreeWay;
+
+  EXPECT_TRUE(std::is_eq(kThreeWay(0, 0)));
+  EXPECT_TRUE(std::is_eq(kThreeWay(-0, -0)));
+
+  EXPECT_TRUE(std::is_eq(kDefaultThreeWay(0, 0)));
+  EXPECT_TRUE(std::is_eq(kDefaultThreeWay(-0, -0)));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyLessFunctorGivenZeros) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyLess<T> kLess(kEpsilon);
+  const FuzzyLess<T> kDefaultLess;
+
+  EXPECT_FALSE(kLess(0, 0));
+  EXPECT_FALSE(kLess(-0, -0));
+
+  EXPECT_FALSE(kDefaultLess(0, 0));
+  EXPECT_FALSE(kDefaultLess(-0, -0));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyLessEqualFunctorGivenZero) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyLessEqual<T> kLessEqual(kEpsilon);
+  const FuzzyLessEqual<T> kDefaultLessEqual;
+
+  EXPECT_TRUE(kLessEqual(0, 0));
+  EXPECT_TRUE(kLessEqual(-0, -0));
+
+  EXPECT_TRUE(kDefaultLessEqual(0, 0));
+  EXPECT_TRUE(kDefaultLessEqual(-0, -0));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyGreaterFunctorGivenZeros) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyGreater<T> kGreater(kEpsilon);
+  const FuzzyGreater<T> kDefaultGreater;
+
+  EXPECT_FALSE(kGreater(0, 0));
+  EXPECT_FALSE(kGreater(-0, -0));
+
+  EXPECT_FALSE(kDefaultGreater(0, 0));
+  EXPECT_FALSE(kDefaultGreater(-0, -0));
+}
+
+TYPED_TEST(FloatingPointTest, FuzzyGreaterEqualFunctorGivenZeros) {
+  using T = TypeParam;
+
+  static constexpr T kEpsilon = epsilon_v<T>;
+
+  const FuzzyGreaterEqual<T> kGreaterEqual(kEpsilon);
+  const FuzzyGreaterEqual<T> kDefaultGreaterEqual;
+
+  EXPECT_TRUE(kGreaterEqual(0, 0));
+  EXPECT_TRUE(kGreaterEqual(-0, -0));
+
+  EXPECT_TRUE(kDefaultGreaterEqual(0, 0));
+  EXPECT_TRUE(kDefaultGreaterEqual(-0, -0));
+}
+
+} // namespace
+} // namespace robocin
