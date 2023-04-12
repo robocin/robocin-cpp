@@ -30,7 +30,7 @@ robocin_cpp_test(
 
 robocin_cpp_library(
         NAME angular
-        HDRS angular.h
+        HDRS angular.h internal/angular_internal.h
         SRCS angular.cpp
         DEPS concepts
 )

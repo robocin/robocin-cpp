@@ -166,5 +166,37 @@ TYPED_TEST(FloatingPointTest, AbsSmallestAngleDiffGivenAnglesOutsidePiAndMinusPi
   EXPECT_NEAR((absSmallestAngleDiff<T, T>(3 * kPi / 2, -5 * kPi / 2)), 0.0, kEpsilon);
 }
 
+// fsin --------------------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, Fsin) {
+  using T = TypeParam;
+
+  // the accuracy of standard trigonometric functions is not
+  // totally defined, and the approach to the floor or ceiling may contain
+  // inconsistencies, so we use fixed a small epsilon.
+  static constexpr T kEpsilon = 1e-2;
+
+  for (const T kDegs : std::views::iota(-360, 361)) { // from -pi to pi, stepped 0.5 degrees.
+    const T kRads = degreesToRadians(kDegs / 2);
+
+    EXPECT_NEAR(fsin(kRads), std::sin(kRads), kEpsilon);
+  }
+}
+
+// fcos --------------------------------------------------------------------------------------------
+TYPED_TEST(FloatingPointTest, Fcos) {
+  using T = TypeParam;
+
+  // the accuracy of standard trigonometric functions is not
+  // totally defined, and the approach to the floor or ceiling may contain
+  // inconsistencies, so we use fixed a small epsilon.
+  static constexpr T kEpsilon = 1e-2;
+
+  for (const T kDegs : std::views::iota(-360, 361)) { // from -pi to pi, with step of 0.5.
+    const T kRads = degreesToRadians(kDegs / 2);
+
+    EXPECT_NEAR(fcos(kRads), std::cos(kRads), kEpsilon);
+  }
+}
+
 } // namespace
 } // namespace robocin

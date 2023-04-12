@@ -20,6 +20,10 @@ The [angular](angular.h) header provides a set of functions to perform operation
 - `normalizeAngle`: normalize an angle to the range [-pi, pi];
 - `smallestAngleDiff`: calculate the smallest angle difference between two angles;
 - `absSmallestAngleDiff`: calculate the absolute value of the smallest angle difference between two angles;
+- `fsin`: get the sine of an angle in degrees from a lookup table (faster
+  than [`std::sin`](https://en.cppreference.com/w/cpp/numeric/math/sin), but less accurate);
+- `fcos`: get the cosine of an angle in degrees from a lookup table (faster
+  than [`std::cos`](https://en.cppreference.com/w/cpp/numeric/math/cos), but less accurate);
 
 > **Note**: As in the standard library, additional overloads are provided for all integer types, which are treated
 > as `double`.
