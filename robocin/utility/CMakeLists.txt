@@ -8,6 +8,12 @@ if (NOT ROBOCIN_FLOAT_EPSILON AND NOT ROBOCIN_DOUBLE_EPSILON AND NOT ROBOCIN_LON
 endif ()
 
 robocin_cpp_library(
+        NAME type_traits
+        HDRS type_traits.h
+        SRCS type_traits.cpp
+)
+
+robocin_cpp_library(
         NAME concepts
         HDRS concepts.h
         SRCS concepts.cpp
@@ -18,5 +24,5 @@ robocin_cpp_library(
         HDRS fuzzy_compare.h
         SRCS fuzzy_compare.cpp
         CONFIGS epsilon.h.in
-        DEPS concepts
+        DEPS type_traits concepts
 )
