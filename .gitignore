@@ -16,7 +16,7 @@
 *.*#
 core
 !core/
-tags
+tags/
 .DS_Store
 .directory
 *.debug
@@ -31,8 +31,8 @@ qrc_*.cpp
 Thumbs.db
 *.res
 *.rc
-/.qmake.cache
-/.qmake.stash
+.qmake.cache
+.qmake.stash
 *.cbp
 
 # QtCreator generated files
@@ -79,11 +79,11 @@ Thumbs.db
 target_wrapper.*
 
 # Binaries' folder
-/bin
-/lib
+bin/
+lib/
 
 # Build
-/build
+build/
 
 # CMake
 CMakeLists.txt.user
@@ -101,3 +101,6 @@ CMakeDoxygenDefaults.cmake
 
 # Python cache
 __pycache__
+
+# Jetbrains IDE
+.idea/
