@@ -8,6 +8,7 @@ A collection of utility functions and classes.
 - [concepts](#concepts)
 - [epsilon](#epsilon)
 - [fuzzy_compare](#fuzzy_compare)
+- [type_traits](#type_traits)
 
 <a name="angular"></a>
 
@@ -102,15 +103,25 @@ std::abs(lhs - rhs) <= epsilon;
 - `fuzzyCmpGreater`: check if a floating point number is greater than another;
 - `fuzzyCmpGreaterEqual`: check if a floating point number is greater than or equal to another.
 - Functors:
+    - `FuzzyIsZero`: functor to check if a floating point number is close to zero;
     - `FuzzyEqualTo`: functor to check if two floating point numbers are close to each other;
     - `FuzzyNotEqualTo`: functor to check if two floating point numbers are not close to each other;
+    - `FuzzyThreeWay`: functor to perform a three-way comparison between two floating point numbers;
     - `FuzzyLess`: functor to check if a floating point number is less than another;
     - `FuzzyLessEqual`: functor to check if a floating point number is less than or equal to another;
     - `FuzzyGreater`: functor to check if a floating point number is greater than another;
     - `FuzzyGreaterEqual`: functor to check if a floating point number is greater than or equal to another.
 
-> **Note**: The `fuzzy*` functions with implicit epsilon are only available when the [epsilon](#epsilon) is defined.
-> Otherwise, you must explicitly pass the epsilon value to the function.
+> **Note**: The `fuzzy*` functions / `Fuzzy*` functors with implicit epsilon are only available when
+> the [epsilon](#epsilon) is defined.
+> Otherwise, you must explicitly pass the epsilon value to the function / during construction.
 
-> **Note**: The `Fuzzy*` functors with implicit epsilon are only available when the [epsilon](#epsilon) is defined.
-> Otherwise, you must explicitly pass the epsilon during construction.
+<a name="type_traits"></a>
+
+## [`type_traits`](type_traits.h)
+
+The [type_traits](type_traits.h) header provides a set of type traits extended the standard library.
+
+- `common_floating_point_for_comparison`: a type trait that represents the common floating point type for comparison
+  between two arithmetic types (the tolerance of the lowest precision floating point is prioritized);
+  - `common_floating_point_for_comparison_t`: a helper alias for `common_floating_point_for_comparison::type`;
