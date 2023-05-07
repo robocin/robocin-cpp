@@ -47,3 +47,10 @@ robocin_cpp_test(
         SRCS angular_test.cpp
         DEPS angular
 )
+
+robocin_cpp_library(
+        NAME collection
+        HDRS collection.h
+        SRCS collection.cpp
+        DEPS tbb
+)
