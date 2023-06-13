@@ -160,157 +160,154 @@ constexpr bool fuzzyCmpGreaterEqual(T lhs, U rhs)
 }
 
 // Functors ----------------------------------------------------------------------------------------
-template <class F>
+template <std::floating_point F>
 class FuzzyIsZero {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyIsZero()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyIsZero(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyIsZero(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type value) const {
-    return fuzzyIsZero(value, epsilon_);
-  }
+  constexpr bool operator()(value_type value) const { return fuzzyIsZero(value, epsilon_); }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
-template <class F>
+template <std::floating_point F>
 class FuzzyEqualTo {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyEqualTo()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyEqualTo(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyEqualTo(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
+  constexpr bool operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpEqual(lhs, rhs, epsilon_);
   }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
-template <class F>
+template <std::floating_point F>
 class FuzzyNotEqualTo {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyNotEqualTo()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyNotEqualTo(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyNotEqualTo(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
+  constexpr bool operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpNotEqual(lhs, rhs, epsilon_);
   }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
-template <class F>
+template <std::floating_point F>
 class FuzzyThreeWay {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyThreeWay()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyThreeWay(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyThreeWay(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr std::strong_ordering operator()(floating_point_type lhs,
-                                            floating_point_type rhs) const {
+  constexpr std::strong_ordering operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpThreeWay(lhs, rhs, epsilon_);
   }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
-template <class F>
+template <std::floating_point F>
 class FuzzyLess {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyLess()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyLess(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyLess(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
+  constexpr bool operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpLess(lhs, rhs, epsilon_);
   }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
-template <class F>
+template <std::floating_point F>
 class FuzzyLessEqual {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyLessEqual()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyLessEqual(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyLessEqual(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
+  constexpr bool operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpLessEqual(lhs, rhs, epsilon_);
   }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
-template <class F>
+template <std::floating_point F>
 class FuzzyGreater {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyGreater()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyGreater(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyGreater(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
+  constexpr bool operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpGreater(lhs, rhs, epsilon_);
   }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
-template <class F>
+template <std::floating_point F>
 class FuzzyGreaterEqual {
  public:
-  using floating_point_type = F;
+  using value_type = F;
 
   constexpr FuzzyGreaterEqual()
-    requires(has_epsilon_v<floating_point_type>)
-      : epsilon_{epsilon_v<floating_point_type>} {}
+    requires(has_epsilon_v<value_type>)
+      : epsilon_{epsilon_v<value_type>} {}
 
-  constexpr explicit FuzzyGreaterEqual(floating_point_type epsilon) : epsilon_{epsilon} {}
+  constexpr explicit FuzzyGreaterEqual(value_type epsilon) : epsilon_{epsilon} {}
 
-  constexpr bool operator()(floating_point_type lhs, floating_point_type rhs) const {
+  constexpr bool operator()(value_type lhs, value_type rhs) const {
     return fuzzyCmpGreaterEqual(lhs, rhs, epsilon_);
   }
 
  private:
-  floating_point_type epsilon_;
+  value_type epsilon_;
 };
 
 } // namespace robocin
