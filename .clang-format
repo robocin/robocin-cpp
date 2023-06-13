@@ -12,7 +12,10 @@ AlignEscapedNewlines: Right
 AlignAfterOpenBracket: Align
 AlignOperands: true
 AlignTrailingComments: true
-AlignConsecutiveMacros: true
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
 
 # allows
 AllowAllArgumentsOnNextLine: false
@@ -23,15 +26,15 @@ AllowShortCaseLabelsOnASingleLine: true
 
 AllowShortEnumsOnASingleLine: false
 
-AllowShortFunctionsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: Never
-AllowShortLambdasOnASingleLine: None
+AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: false
 
 # always
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: true
+AlwaysBreakTemplateDeclarations: Yes
 
 # bin packs
 BinPackArguments: false
@@ -39,7 +42,7 @@ BinPackParameters: false
 
 # breaks
 BreakStringLiterals: true
-BreakBeforeBinaryOperators: None
+BreakBeforeBinaryOperators: All
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: true
@@ -50,7 +53,7 @@ MaxEmptyLinesToKeep: 1
 
 PointerAlignment: Left
 
-SortIncludes: true
+SortIncludes: CaseInsensitive
 SortUsingDeclarations: true
 
 # spaces
