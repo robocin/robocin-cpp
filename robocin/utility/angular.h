@@ -17,20 +17,18 @@ template <arithmetic T>
 constexpr auto degreesToRadians(T degrees) {
   using F = std::conditional_t<std::floating_point<T>, T, double>;
 
-  constexpr F kPi = std::numbers::pi_v<F>;
-  constexpr F kPiInDegrees = 180;
+  constexpr F kDegreesToRadiansFactor = std::numbers::pi_v<F> / 180;
 
-  return degrees * kPi / kPiInDegrees;
+  return degrees * kDegreesToRadiansFactor;
 }
 
 template <arithmetic T>
 constexpr auto radiansToDegrees(T radians) {
   using F = std::conditional_t<std::floating_point<T>, T, double>;
 
-  constexpr F kPi = std::numbers::pi_v<F>;
-  constexpr F kPiInDegrees = 180;
+  constexpr F kRadiansToDegreesFactor = 180 / std::numbers::pi_v<F>;
 
-  return radians * kPiInDegrees / kPi;
+  return radians * kRadiansToDegreesFactor;
 }
 
 template <arithmetic T>
@@ -39,6 +37,10 @@ constexpr auto normalizeAngle(T angle) {
 
   constexpr F kPi = std::numbers::pi_v<F>;
   constexpr F k2Pi = 2 * kPi;
+
+  if (-kPi <= angle && angle <= kPi) {
+    return static_cast<F>(angle);
+  }
 
   F result = std::fmod(static_cast<F>(angle), k2Pi);
   if (result < -kPi) {
