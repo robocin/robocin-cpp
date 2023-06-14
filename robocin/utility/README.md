@@ -69,32 +69,32 @@ that RobôCIn and other robotics teams use, the way chosen is to compare the abs
 a [tolerance margin](#epsilon):
 
 ```cpp
-// check if a floating point number 'is zero':
+// returns true if a floating point number 'is zero':
 std::abs(value) <= epsilon;
 
-// check if two floating point numbers 'are equal':
+// returns true if two floating point numbers 'are equal':
 std::abs(lhs - rhs) <= epsilon;
 ```
 
-- `fuzzyIsZero`: check if a floating point number is close to zero;
-- `fuzzyCmpEqual`: check if two floating point numbers are close to each other;
-- `fuzzyCmpNotEqual`: check if two floating point numbers are not close to each other;
-- `fuzzyCmpThreeWay`: check if two floating point numbers are close to each other, returning a C++20 three-way
+- `fuzzyIsZero`: returns true if a floating point number is close to zero;
+- `fuzzyCmpEqual`: returns true if two floating point numbers are close to each other;
+- `fuzzyCmpNotEqual`: returns true if two floating point numbers are not close to each other;
+- `fuzzyCmpThreeWay`: returns true if two floating point numbers are close to each other, returning a C++20 three-way
   comparison result (see
   [Three-way comparison](https://en.cppreference.com/w/cpp/language/operator_comparison#Three-way_comparison));
-- `fuzzyCmpLess`: check if a floating point number is less than another;
-- `fuzzyCmpLessEqual`: check if a floating point number is less than or equal to another;
-- `fuzzyCmpGreater`: check if a floating point number is greater than another;
-- `fuzzyCmpGreaterEqual`: check if a floating point number is greater than or equal to another.
+- `fuzzyCmpLess`: returns true if a floating point number is less than another;
+- `fuzzyCmpLessEqual`: returns true if a floating point number is less than or equal to another;
+- `fuzzyCmpGreater`: returns true if a floating point number is greater than another;
+- `fuzzyCmpGreaterEqual`: returns true if a floating point number is greater than or equal to another.
 - Functors:
-    - `FuzzyIsZero`: functor to check if a floating point number is close to zero;
-    - `FuzzyEqualTo`: functor to check if two floating point numbers are close to each other;
-    - `FuzzyNotEqualTo`: functor to check if two floating point numbers are not close to each other;
+    - `FuzzyIsZero`: functor that returns true if a floating point number is close to zero;
+    - `FuzzyEqualTo`: functor that returns true if two floating point numbers are close to each other;
+    - `FuzzyNotEqualTo`: functor that returns true if two floating point numbers are not close to each other;
     - `FuzzyThreeWay`: functor to perform a three-way comparison between two floating point numbers;
-    - `FuzzyLess`: functor to check if a floating point number is less than another;
-    - `FuzzyLessEqual`: functor to check if a floating point number is less than or equal to another;
-    - `FuzzyGreater`: functor to check if a floating point number is greater than another;
-    - `FuzzyGreaterEqual`: functor to check if a floating point number is greater than or equal to another.
+    - `FuzzyLess`: functor that returns true if a floating point number is less than another;
+    - `FuzzyLessEqual`: functor that returns true if a floating point number is less than or equal to another;
+    - `FuzzyGreater`: functor that returns true if a floating point number is greater than another;
+    - `FuzzyGreaterEqual`: functor that returns true if a floating point number is greater than or equal to another.
 
 > **Note**: The `fuzzy*` functions / `Fuzzy*` functors with implicit epsilon are only available when
 > the [epsilon](#epsilon) is defined.
@@ -108,4 +108,4 @@ The [type_traits](type_traits.h) header provides a set of type traits extended t
 
 - `common_floating_point_for_comparison`: a type trait that represents the common floating point type for comparison
   between two arithmetic types (the tolerance of the lowest precision floating point is prioritized);
-  - `common_floating_point_for_comparison_t`: a helper alias for `common_floating_point_for_comparison::type`;
+    - `common_floating_point_for_comparison_t`: a helper alias for `common_floating_point_for_comparison::type`;

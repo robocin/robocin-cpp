@@ -95,7 +95,7 @@ constexpr bool fuzzyCmpLess(T lhs, U rhs, V epsilon) {
   return std::is_lt(fuzzyCmpThreeWay(lhs, rhs, epsilon));
 }
 
-// Compare if the first given value lt than the second, using the injected epsilon -----------------
+// Compare if the first given value lt the second, using the injected epsilon ----------------------
 template <arithmetic T,
           arithmetic U,
           std::floating_point V = common_floating_point_for_comparison_t<T, U>>
