@@ -26,3 +26,10 @@ robocin_cpp_library(
         CONFIGS epsilon.h.in
         DEPS type_traits concepts
 )
+
+robocin_cpp_test(
+        NAME fuzzy_compare_test
+        HDRS internal/test/epsilon_injector.h
+        SRCS fuzzy_compare_test.cpp
+        DEPS fuzzy_compare
+)
