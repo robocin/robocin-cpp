@@ -33,7 +33,7 @@ In progress...
 
 ## Codemap
 
-In progress...
+- [`utility`](robocin/utility): a collection of utility and helper code.
 
 <a name="contributing"></a>
 
