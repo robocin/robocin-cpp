@@ -4,10 +4,26 @@ A collection of utility functions and classes.
 
 ## Table of Contents
 
+- [angular](#angular)
 - [concepts](#concepts)
 - [epsilon](#epsilon)
 - [fuzzy_compare](#fuzzy_compare)
 - [type_traits](#type_traits)
+
+<a name="angular"></a>
+
+## [`angular`](angular.h)
+
+The [angular](angular.h) header provides a set of functions to perform operations on angular values.
+
+- `degreesToRadians`: convert degrees to radians;
+- `radiansToDegrees`: convert radians to degrees;
+- `normalizeAngle`: normalize an angle to the range [-pi, pi];
+- `smallestAngleDiff`: calculate the smallest angle difference between two angles;
+- `absSmallestAngleDiff`: calculate the absolute value of the smallest angle difference between two angles;
+
+> **Note**: As in the standard library, additional overloads are provided for all integer types, which are treated
+> as `double`.
 
 <a name="concepts"></a>
 
