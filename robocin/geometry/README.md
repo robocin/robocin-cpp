@@ -99,8 +99,8 @@ various methods and operators for manipulating and performing calculations with 
   point.
 - `auto angle() const`: Computes the angle (in radians) between the positive x-axis and the vector from the origin to
   the current point.
-- `auto angleTo(const Point2D& other) const`: Computes the angle (in radians) between the vector from the origin to the
-  current point and the vector from the origin to another point.
+- `auto angleTo(const Point2D& other) const`: Computes the angle (in radians) between the
+  current vector and another.
 
 ### Rotations
 
