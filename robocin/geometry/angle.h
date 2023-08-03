@@ -133,22 +133,20 @@ class Angle {
   [[nodiscard]] constexpr Angle normalized() && { return normalize(), std::move(*this); }
   [[nodiscard]] constexpr Angle normalized() const& { return Angle{*this}.normalized(); }
 
-  constexpr void differentiateWith(type other) & { value_ = smallestAngleDiff(value_, other); }
-  [[nodiscard]] constexpr Angle differentiatedWith(type other) && {
-    return differentiateWith(other), std::move(*this);
+  constexpr void smallestDiffTo(type other) & { value_ = smallestAngleDiff(value_, other); }
+  [[nodiscard]] constexpr Angle smallestDiffdTo(type other) && {
+    return smallestDiffTo(other), std::move(*this);
   }
-  [[nodiscard]] constexpr Angle differentiatedWith(type other) const& {
-    return Angle{*this}.differentiateWith(other);
+  [[nodiscard]] constexpr Angle smallestDiffdTo(type other) const& {
+    return Angle{*this}.smallestDiffdTo(other);
   }
 
-  constexpr void absDifferentiateWith(type other) & {
-    value_ = std::abs(smallestAngleDiff(value_, other));
+  constexpr void absSmallestDiffTo(type other) & { value_ = absSmallestAngleDiff(value_, other); }
+  [[nodiscard]] constexpr Angle absSmallestDiffdTo(type other) && {
+    return absSmallestDiffTo(other), std::move(*this);
   }
-  [[nodiscard]] constexpr Angle absDifferentiatedWith(type other) && {
-    return absDifferentiateWith(other), std::move(*this);
-  }
-  [[nodiscard]] constexpr Angle absDifferentiatedWith(type other) const& {
-    return Angle{*this}.absDifferentiateWith(other);
+  [[nodiscard]] constexpr Angle absSmallestDiffdTo(type other) const& {
+    return Angle{*this}.absSmallestDiffdTo(other);
   }
 
   // Validators ------------------------------------------------------------------------------------
