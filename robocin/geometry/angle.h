@@ -6,16 +6,15 @@
 #ifndef ROBOCIN_GEOMETRY_ANGLE_H
 #define ROBOCIN_GEOMETRY_ANGLE_H
 
-#include <concepts>
-#include <iostream>
-#include <numbers>
-
+#include "robocin/geometry/internal/angle_internal.h"
 #include "robocin/utility/angular.h"
 #include "robocin/utility/concepts.h"
 #include "robocin/utility/fuzzy_compare.h"
 #include "robocin/utility/type_traits.h"
 
-#include "robocin/geometry/internal/angle_internal.h"
+#include <concepts>
+#include <iostream>
+#include <numbers>
 
 namespace robocin {
 
@@ -133,20 +132,18 @@ class Angle {
   [[nodiscard]] constexpr Angle normalized() && { return normalize(), std::move(*this); }
   [[nodiscard]] constexpr Angle normalized() const& { return Angle{*this}.normalized(); }
 
-  constexpr void smallestDiffTo(type other) & { value_ = smallestAngleDiff(value_, other); }
-  [[nodiscard]] constexpr Angle smallestDiffdTo(type other) && {
-    return smallestDiffTo(other), std::move(*this);
+  [[nodiscard]] constexpr Angle smallestDiffTo(type other) && {
+    return value_ = smallestAngleDiff(value_, other), std::move(*this);
   }
-  [[nodiscard]] constexpr Angle smallestDiffdTo(type other) const& {
-    return Angle{*this}.smallestDiffdTo(other);
+  [[nodiscard]] constexpr Angle smallestDiffTo(type other) const& {
+    return Angle{*this}.smallestDiffTo(other);
   }
 
-  constexpr void absSmallestDiffTo(type other) & { value_ = absSmallestAngleDiff(value_, other); }
-  [[nodiscard]] constexpr Angle absSmallestDiffdTo(type other) && {
-    return absSmallestDiffTo(other), std::move(*this);
+  [[nodiscard]] constexpr Angle absSmallestDiffTo(type other) && {
+    return value_ = absSmallestAngleDiff(value_, other), std::move(*this);
   }
-  [[nodiscard]] constexpr Angle absSmallestDiffdTo(type other) const& {
-    return Angle{*this}.absSmallestDiffdTo(other);
+  [[nodiscard]] constexpr Angle absSmallestDiffTo(type other) const& {
+    return Angle{*this}.absSmallestDiffTo(other);
   }
 
   // Validators ------------------------------------------------------------------------------------
