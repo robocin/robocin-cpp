@@ -53,6 +53,7 @@ MaxEmptyLinesToKeep: 1
 
 PointerAlignment: Left
 
+IncludeBlocks: Regroup
 SortIncludes: CaseInsensitive
 SortUsingDeclarations: true
 
