@@ -6,14 +6,14 @@
 #ifndef ROBOCIN_GEOMETRY_POINT2D_H
 #define ROBOCIN_GEOMETRY_POINT2D_H
 
+#include "robocin/geometry/internal/point2d_internal.h"
+#include "robocin/utility/fuzzy_compare.h"
+
 #include <cmath>
 #include <iostream>
 #include <numeric>
 #include <optional>
 #include <stdexcept>
-
-#include "robocin/geometry/internal/point2d_internal.h"
-#include "robocin/utility/fuzzy_compare.h"
 
 namespace robocin {
 
@@ -120,7 +120,7 @@ struct Point2D {
     }
   }
 
-  inline constexpr std::three_way_comparable auto operator<=>(const Point2D& other) const {
+  inline constexpr auto operator<=>(const Point2D& other) const {
     if constexpr (has_epsilon_v<value_type>) {
       if (auto x_cmp = fuzzyCmpThreeWay(x, other.x); std::is_neq(x_cmp)) {
         return x_cmp;
@@ -208,7 +208,7 @@ struct Point2D {
   [[nodiscard]] constexpr Point2D rotatedCCW(value_type t) &&
     requires(std::floating_point<value_type>)
   {
-    return rotateCW(t), std::move(*this);
+    return rotateCCW(t), std::move(*this);
   }
   [[nodiscard]] constexpr Point2D rotatedCCW(value_type t) const&
     requires(std::floating_point<value_type>)
@@ -247,11 +247,11 @@ struct Point2D {
   {
     if constexpr (has_epsilon_v<value_type>) {
       if (value_type norm = this->norm(); not fuzzyIsZero(norm)) {
-        x *= norm, y *= norm;
+        x /= norm, y /= norm;
       }
     } else {
       if (value_type norm = this->norm()) {
-        x *= norm, y *= norm;
+        x /= norm, y /= norm;
       }
     }
   }

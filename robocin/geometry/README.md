@@ -86,7 +86,7 @@ various methods and operators for manipulating and performing calculations with 
 ### Comparison Operators
 
 - `bool operator==(const Point2D& other) const`: Equality operator that checks if two points are equal;
-- `std::three_way_comparable auto operator<=>(const Point2D& other) const`: Three-way comparison operator that compares
+- `auto operator<=>(const Point2D& other) const`: Three-way comparison operator that compares
   two points and returns their relative ordering;
 
 ### Swap

@@ -6,6 +6,7 @@
 #ifndef ROBOCIN_GEOMETRY_POINT2D_INTERNAL_H
 #define ROBOCIN_GEOMETRY_POINT2D_INTERNAL_H
 
+#include <iterator>
 #include <type_traits>
 
 namespace robocin::point2d_internal {
