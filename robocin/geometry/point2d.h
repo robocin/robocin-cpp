@@ -120,7 +120,7 @@ struct Point2D {
     }
   }
 
-  inline constexpr auto operator<=>(const Point2D& other) const {
+  inline constexpr std::three_way_comparable auto operator<=>(const Point2D& other) const {
     if constexpr (has_epsilon_v<value_type>) {
       if (auto x_cmp = fuzzyCmpThreeWay(x, other.x); std::is_neq(x_cmp)) {
         return x_cmp;
@@ -142,18 +142,23 @@ struct Point2D {
   constexpr value_type cross(const Point2D& other) const { return x * other.y - y * other.x; }
 
   constexpr value_type manhattanLength() const { return std::abs(x) + std::abs(y); }
+  constexpr value_type manhattanDistTo(const Point2D& other) const {
+    return std::abs(x - other.x) + std::abs(y - other.y);
+  }
 
   constexpr value_type lengthSquared() const { return x * x + y * y; }
-  constexpr auto length() const { return std::sqrt(lengthSquared()); }
-  constexpr auto norm() const { return std::sqrt(lengthSquared()); }
+  constexpr std::floating_point auto length() const { return std::sqrt(lengthSquared()); }
+  constexpr std::floating_point auto norm() const { return std::sqrt(lengthSquared()); }
 
   constexpr value_type distSquaredTo(const Point2D& other) const {
     return (x - other.x) * (x - other.x) + (y - other.y) * (y - other.y);
   }
-  constexpr auto distTo(const Point2D& other) const { return std::sqrt(distSquaredTo(other)); }
+  constexpr std::floating_point auto distTo(const Point2D& other) const {
+    return std::sqrt(distSquaredTo(other));
+  }
 
-  constexpr auto angle() const { return std::atan2(y, x); }
-  constexpr auto angleTo(const Point2D& other) const {
+  constexpr std::floating_point auto angle() const { return std::atan2(y, x); }
+  constexpr std::floating_point auto angleTo(const Point2D& other) const {
     return std::atan2(cross(other), dot(other));
   }
 
@@ -335,6 +340,12 @@ struct Point2D {
     return os << "(x = " << point.x << ", y = " << point.y << ")";
   }
 };
+
+// Deduction guides --------------------------------------------------------------------------------
+Point2D() -> Point2D<double>;
+
+template <class T, class U>
+Point2D(T, U) -> Point2D<std::common_type_t<T, U>>;
 
 } // namespace robocin
 
