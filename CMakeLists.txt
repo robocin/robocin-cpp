@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.16)
 
 ########################################################################################################################
 
+# sets vcpkg as the dependency manager for the project
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+
 project(robocin LANGUAGES CXX)
 
 ########################################################################################################################
