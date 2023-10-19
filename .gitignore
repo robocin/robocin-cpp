@@ -99,6 +99,10 @@ _deps
 CMakeDoxyfile.in
 CMakeDoxygenDefaults.cmake
 
+# Vcpkg
+
+vcpkg_installed/*
+
 # Python cache
 __pycache__
 

@@ -23,17 +23,23 @@ In progress...
 
 In progress...
 
+### Submodules
+
+On the start of the project make sure to init all the submodules by calling `git submodule init` and update it to the lastest updated version with `git submodule update`.
+
 <a name="build"></a>
 
 ## Building
 
 [CMake](https://cmake.org/) is the official build system of the `robocin-cpp` project.
+[Vcpkg](https://vcpkg.io/en/) supported dependency manager for the `robocin-cpp` project.
 
 <a name="codemap"></a>
 
 ## Codemap
 
-- [`utility`](robocin/utility): a collection of utility and helper code.
+- [`geometry`](robocin/geometry): a collection of geometric classes;
+- [`utility`](robocin/utility): a collection of utility and helper code;
 
 <a name="contributing"></a>
 
