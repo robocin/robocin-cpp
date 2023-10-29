@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "xtr1common": "cpp",
+        "limits": "cpp"
+    }
+}

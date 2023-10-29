@@ -33,7 +33,8 @@ In progress...
 
 ## Codemap
 
-- [`utility`](robocin/utility): a collection of utility and helper code.
+- [`geometry`](robocin/geometry): a collection of geometric classes;
+- [`utility`](robocin/utility): a collection of utility and helper code;
 
 <a name="contributing"></a>
 
